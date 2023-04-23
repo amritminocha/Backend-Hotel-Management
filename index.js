@@ -10,6 +10,16 @@ const client = new MongoClient(url);
 
 const database = client.db("hotel-management");
 
+var cors = require('cors');
+app.use(cors());
+app.use(function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
+
 
 app.post('/user', async (req, res) => {
     const userData = req.body;
@@ -151,6 +161,21 @@ app.get('/rooms', async (req, res) => {
     
 })
 
+app.get('/findRoom', async (req, res) => {
+
+    // Retrieve the "type" query parameter value
+    const roomId = req.query.id;
+    const roomCollection = database.collection("room-data");
+
+    const r = await roomCollection.findOne({roomId});
+    if (!r) {
+        res.status(400).json({message: 'Not found'});
+      } else {
+        res.send(r);
+      }
+    
+})
+
   
-const PORT = 8081;
+const PORT = 8082;
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
