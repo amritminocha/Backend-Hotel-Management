@@ -39,7 +39,7 @@ app.post('/login', async (req, res) => {
         return res.status(401).json({ message: 'Invalid password' });
     }
 
-    return res.sendstatus(200).json({ message: 'Login successful' });
+    return res.status(200).json({ message: 'Login successful', email: user.email, name: user.name, type: user.type });
 })
 
 app.post('/addRoom', async (req, res) => {
@@ -135,6 +135,22 @@ app.put('/updateBooking/:id', async (req, res) => {
     }
 });
 
+app.get('/rooms', async (req, res) => {
+
+    // Retrieve the "type" query parameter value
+    const type = req.query.type;
+    const roomCollection = database.collection("room-data");
+
+
+    const r = await roomCollection.find({ type: type }).toArray();
+    if (r.length > 0) {
+        res.send(r);
+      } else {
+        res.status(400).json({message: 'Not found'});
+      }
+    
+})
+
   
-const PORT = 8080;
+const PORT = 8081;
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
