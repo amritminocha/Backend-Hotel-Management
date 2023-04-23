@@ -84,12 +84,15 @@ app.put('/updateRoom/:id', async (req, res) => {
         detail: roomData.detail,
         price: roomData.price,
         type: roomData.type,
-        roomId: roomId
+        amenities: roomData.amenities,
+        roomId: roomId,
+        bookedDates: roomData.bookedDates
       },
     };
 
     const options = { upsert: false };
     const result = await roomCollection.updateOne(filter, updateDoc, options);
+    console.log(result)
     if (result.matchedCount === 0) {
         res.status(400).json({ message : 'Not Found'})
     } else if (result.modifiedCount === 1) {
