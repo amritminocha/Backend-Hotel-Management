@@ -176,6 +176,16 @@ app.get('/findRoom', async (req, res) => {
     
 })
 
+app.get('/allBookings', async (req, res) => {
+    const bookingCollection = database.collection("booking-data");
+    const r = await bookingCollection.find({}).toArray();
+    if (r.length > 0) {
+        res.send(r);
+      } else {
+        res.status(400).json({message: 'Not found'});
+      }
+})
+
   
-const PORT = 8082;
+const PORT = 8080;
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
