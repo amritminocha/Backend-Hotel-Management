@@ -50,6 +50,7 @@ app.post('/addRoom', async (req, res) => {
     const roomId = 'room' + (count + 1);
     // Add the room ID to the room data
     roomData.roomId = roomId;
+    roomData.bookedDates=[];
     console.log(roomData);
     const result = await userCollection.insertOne(roomData);
     console.log(result);
@@ -87,6 +88,53 @@ app.put('/updateRoom/:id', async (req, res) => {
         res.status(400).json({ message : 'Error'})
     }
 });
+
+app.post('/addBooking', async (req, res) => {
+    const bookingData = req.body;
+    const bookingCollection = database.collection("booking-data");
+    const count = await bookingCollection.countDocuments();
+    const bookingId = 'booking' + (count + 1);
+    // Add the booking ID to the room data
+    bookingData.bookingId = bookingId;
+    console.log(bookingData);
+    const result = await bookingCollection.insertOne(bookingData);
+    console.log(result);
+    console.log(`A document was inserted with the _id: ${result.insertedId}`);
+    if (result.acknowledged === true) {
+        return res.send(200);
+    } else {
+        res.send(400);
+    }
+});
+
+
+app.put('/updateBooking/:id', async (req, res) => {
+    const bookingId = req.params.id;
+    const bookingData = req.body;
+    const filter = { bookingId: bookingId };
+    const bookingCollection = database.collection("booking-data");
+    
+    const updateDoc = {
+      $set: {
+        bookingId: bookingId,
+        bookedDates: bookingData.bookedDates,
+        name: bookingData.name,
+        detail: bookingData.detail,
+        price: bookingData.price
+      },
+    };
+
+    const options = { upsert: false };
+    const result = await bookingCollection.updateOne(filter, updateDoc, options);
+    if (result.matchedCount === 0) {
+        res.status(400).json({ message : 'Not Found'})
+    } else if (result.modifiedCount === 1) {
+        res.status(200).json({ message : 'Updated'})
+    } else {
+        res.status(400).json({ message : 'Error'})
+    }
+});
+
   
 const PORT = 8080;
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
