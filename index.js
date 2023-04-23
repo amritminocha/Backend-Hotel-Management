@@ -164,6 +164,18 @@ app.get('/rooms', async (req, res) => {
     
 })
 
+app.get('/findBooking', async (req, res) => {
+    const email = req.query.email;
+    const bookingCollection = database.collection("booking-data");
+
+    const r = await bookingCollection.find({email}).toArray();
+    if (!r) {
+        res.status(400).json({message: 'Not found'});
+      } else {
+        res.send(r);
+      }
+})
+
 app.get('/findRoom', async (req, res) => {
 
     // Retrieve the "type" query parameter value
