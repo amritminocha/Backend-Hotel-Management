@@ -1,7 +1,7 @@
 # Backend-Hotel-Management
 
-#Install dependencies
+#Install dependencies:
 npm install
 
-#Start Backend Server
+#Start Backend Server:
 node index.js
